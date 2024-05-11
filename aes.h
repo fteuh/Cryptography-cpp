@@ -14,5 +14,6 @@ public:
     static std::string encrypt(std::string data, std::string key, int bits);
 private:
     static Block subBytes(Block block);
-    static Blocks divideBlocks(std::string data);
+    static Blocks divideBlocks(const std::string& data);
+    static Block shiftRows(Block block);
 };

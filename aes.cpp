@@ -1,4 +1,5 @@
 #include "aes.h"
+#include <algorithm>
 using namespace std;
 
 string AES::encrypt(std::string data, std::string key, int bits) {
@@ -49,10 +50,23 @@ Block AES::subBytes(Block block) {
     return block;
 }
 
-//char* AES::shiftRows() {
-//
-//}
-//
+Block AES::shiftRows(Block block) {
+    unsigned char tempRow[4];
+    int newPos;
+
+    for (int row = 1; row < 4; row++) {
+        copy(block.data + row*4, block.data + row*4+4, tempRow);
+        for (int i = 0; i < 4; i++) {
+            newPos = i - row;
+            if (newPos < 0) newPos += 4;
+            newPos += 4*row;
+            block.data[newPos] = tempRow[i];
+        }
+    }
+
+    return block;
+}
+
 //char* AES::mixColumns() {
 //
 //}
@@ -61,8 +75,8 @@ Block AES::subBytes(Block block) {
 //
 //}
 
-Blocks AES::divideBlocks(string data) {
-    int blocksNum = data.length() / 16;
+Blocks AES::divideBlocks(const string& data) {
+    int blocksNum = (int)data.length() / 16;
     if (blocksNum * 16 < data.length()) {
         blocksNum++;
     }
