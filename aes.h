@@ -1,7 +1,7 @@
 #include <string>  // Include the correct header for std::string
 
 struct Block {
-    char data[16];
+    unsigned char data[16];
 };
 
 struct Blocks {
@@ -12,7 +12,7 @@ struct Blocks {
 class AES {
 public:
     static std::string encrypt(std::string data, std::string key, int bits);
-    static Block subBytes();
 private:
+    static Block subBytes(Block block);
     static Blocks divideBlocks(std::string data);
 };

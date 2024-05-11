@@ -38,8 +38,15 @@ const uint8_t Sbox[256] = {
     0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16
 };
 
-Block AES::subBytes() {
+Block AES::subBytes(Block block) {
+    int x, y;
+    for (int i = 0; i < 16; i++) {
+        x = block.data[i] >> 4;
+        y = block.data[i] % 16;
+        block.data[i] = Sbox[x * 16 + y];
+    }
 
+    return block;
 }
 
 //char* AES::shiftRows() {
@@ -70,7 +77,10 @@ Blocks AES::divideBlocks(string data) {
 
     for (int i = 0; i < blocksNum; i++) {
         for (int j = 0; j < 16; j++) {
-            blocks.blocks[i].data[j] = cdata[i * 16 + j];
+            if (cdata[i * 16 + j])
+                blocks.blocks[i].data[j] = cdata[i * 16 + j];
+            else
+                blocks.blocks[i].data[j] = 0;
         }
     }
 
