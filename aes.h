@@ -13,7 +13,9 @@ class AES {
 public:
     static std::string encrypt(std::string data, std::string key, int bits);
 private:
+    static Block mixColumns(Block block);
     static Block subBytes(Block block);
+    static unsigned char gmul(unsigned char a, unsigned char b);
     static Blocks divideBlocks(const std::string& data);
     static Block shiftRows(Block block);
 };

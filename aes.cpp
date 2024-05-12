@@ -39,6 +39,24 @@ const uint8_t Sbox[256] = {
     0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16
 };
 
+
+unsigned char AES::gmul(unsigned char a, unsigned char b) {
+    unsigned char p = 0;
+    unsigned char carry;
+    for (int i = 0; i < 8; i++) {
+        if (b & 1) {
+            p ^= a;
+        }
+        carry = a & 0x80;  // Check if high bit is set
+        a <<= 1;
+        if (carry) {
+            a ^= 0x1b;  // XOR with the irreducible polynomial
+        }
+        b >>= 1;
+    }
+    return p;
+}
+
 Block AES::subBytes(Block block) {
     int x, y;
     for (int i = 0; i < 16; i++) {
@@ -67,10 +85,32 @@ Block AES::shiftRows(Block block) {
     return block;
 }
 
-//char* AES::mixColumns() {
-//
-//}
-//
+Block AES::mixColumns(Block block) {
+    const unsigned char mixMatrix[4][4] = {
+            {0x02, 0x03, 0x01, 0x01},
+            {0x01, 0x02, 0x03, 0x01},
+            {0x01, 0x01, 0x02, 0x03},
+            {0x03, 0x01, 0x01, 0x02}
+    };
+
+    unsigned char curCol[4];
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; ++j) {
+            curCol[j] = block.data[j * 4 + i];
+        }
+
+        for (int j = 0; j < 4; j++) {
+            block.data[j * 4 + i] = 0;
+            for (int k = 0; k < 4; ++k) {
+                block.data[j * 4 + i] ^= gmul(mixMatrix[j][k], curCol[k]);
+            }
+        }
+    }
+
+    return block;
+}
+
 //char* AES::addRoundKey() {
 //
 //}
