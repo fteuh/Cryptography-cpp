@@ -111,9 +111,13 @@ Block AES::mixColumns(Block block) {
     return block;
 }
 
-//char* AES::addRoundKey() {
-//
-//}
+Block AES::addRoundKey(Block block, const unsigned char roundKey[16]) {
+    for (int i = 0; i < 16; i++) {
+        block.data[i] ^= roundKey[i];
+    }
+
+    return block;
+}
 
 Blocks AES::divideBlocks(const string& data) {
     int blocksNum = (int)data.length() / 16;
